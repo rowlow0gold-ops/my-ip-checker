@@ -11,8 +11,15 @@ interface LangContextType {
 
 const LangContext = createContext<LangContextType | null>(null);
 
+function detectLang(): Lang {
+  if (typeof navigator === "undefined") return "ko";
+  const browserLang = navigator.language.slice(0, 2).toLowerCase();
+  const langMap: Record<string, Lang> = { ko: "ko", en: "en", ja: "ja", zh: "zh", ru: "ru" };
+  return langMap[browserLang] || "en";
+}
+
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>("ko");
+  const [lang, setLang] = useState<Lang>(detectLang);
 
   const t = (key: string) => translations[lang][key] || key;
 
