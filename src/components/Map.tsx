@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { useLang } from "@/context/LangContext";
 
 interface MapProps {
@@ -11,10 +11,48 @@ interface MapProps {
   lang?: string;
 }
 
+const STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+
+const LANG_MAP: Record<string, string> = {
+  ko: "name:ko",
+  en: "name:en",
+  ja: "name:ja",
+  zh: "name:zh",
+  ru: "name:ru",
+};
+
+function setStyleLanguage(style: maplibregl.StyleSpecification, lang: string): maplibregl.StyleSpecification {
+  const nameField = LANG_MAP[lang] || "name:en";
+  const updated = JSON.parse(JSON.stringify(style));
+
+  for (const layer of updated.layers) {
+    if (layer.layout?.["text-field"]) {
+      const tf = layer.layout["text-field"];
+      // Replace name references with the target language, fallback to original name
+      if (typeof tf === "string" && tf.includes("name")) {
+        layer.layout["text-field"] = [
+          "coalesce",
+          ["get", nameField],
+          ["get", "name"],
+        ];
+      } else if (Array.isArray(tf)) {
+        layer.layout["text-field"] = [
+          "coalesce",
+          ["get", nameField],
+          ["get", "name"],
+        ];
+      }
+    }
+  }
+
+  return updated;
+}
+
 export default function Map({ lat, lon, lang = "ko" }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const markerRef = useRef<L.Marker | null>(null);
+  const mapInstanceRef = useRef<maplibregl.Map | null>(null);
+  const markerRef = useRef<maplibregl.Marker | null>(null);
+  const styleRef = useRef<maplibregl.StyleSpecification | null>(null);
   const [locating, setLocating] = useState(false);
   const [located, setLocated] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -25,20 +63,29 @@ export default function Map({ lat, lon, lang = "ko" }: MapProps) {
     setIsMobile("ontouchstart" in window || navigator.maxTouchPoints > 0);
   }, []);
 
+  // Initialize map
   useEffect(() => {
     if (!mapRef.current) return;
 
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-      mapInstanceRef.current = null;
-    }
+    const initMap = async () => {
+      const res = await fetch(STYLE_URL);
+      const baseStyle = await res.json();
+      styleRef.current = baseStyle;
 
-    const map = L.map(mapRef.current).setView([lat, lon], 11);
-    mapInstanceRef.current = map;
+      const localizedStyle = setStyleLanguage(baseStyle, lang);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
+      const map = new maplibregl.Map({
+        container: mapRef.current!,
+        style: localizedStyle,
+        center: [lon, lat],
+        zoom: 11,
+        attributionControl: true,
+      });
+
+      mapInstanceRef.current = map;
+    };
+
+    initMap();
 
     return () => {
       if (mapInstanceRef.current) {
@@ -46,7 +93,17 @@ export default function Map({ lat, lon, lang = "ko" }: MapProps) {
         mapInstanceRef.current = null;
       }
     };
-  }, [lat, lon, lang]);
+  }, [lat, lon]);
+
+  // Update language without re-creating map
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const baseStyle = styleRef.current;
+    if (!map || !baseStyle) return;
+
+    const localizedStyle = setStyleLanguage(baseStyle, lang);
+    map.setStyle(localizedStyle);
+  }, [lang]);
 
   const handleLocate = () => {
     if (!navigator.geolocation) {
@@ -67,25 +124,18 @@ export default function Map({ lat, lon, lang = "ko" }: MapProps) {
           markerRef.current.remove();
         }
 
-        map.setView([latitude, longitude], 15);
+        map.flyTo({ center: [longitude, latitude], zoom: 15 });
 
-        const icon = L.divIcon({
-          className: "gps-marker",
-          html: `<div style="
-            width: 20px; height: 20px;
-            background: #ef4444;
-            border: 3px solid white;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          "></div>`,
-          iconSize: [20, 20],
-          iconAnchor: [10, 10],
-        });
+        const el = document.createElement("div");
+        el.style.cssText =
+          "width:20px;height:20px;background:#ef4444;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);";
 
-        markerRef.current = L.marker([latitude, longitude], { icon })
-          .addTo(map)
-          .bindPopup(t("myLocation"))
-          .openPopup();
+        markerRef.current = new maplibregl.Marker({ element: el })
+          .setLngLat([longitude, latitude])
+          .setPopup(new maplibregl.Popup().setText(t("myLocation")))
+          .addTo(map);
+
+        markerRef.current.togglePopup();
 
         setLocating(false);
         setLocated(true);
