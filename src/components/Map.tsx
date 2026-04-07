@@ -36,10 +36,9 @@ export default function Map({ lat, lon, lang = "ko" }: MapProps) {
     const map = L.map(mapRef.current).setView([lat, lon], 11);
     mapInstanceRef.current = map;
 
-    L.tileLayer("https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png?lang={lang}", {
-      attribution: "&copy; OpenStreetMap contributors &copy; Wikimedia",
-      lang,
-    } as L.TileLayerOptions & { lang: string }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
 
     return () => {
       if (mapInstanceRef.current) {
