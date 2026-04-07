@@ -78,7 +78,7 @@ export default function Home() {
                   위치 지도
                 </h2>
               </div>
-              <Map lat={ipInfo.lat} lon={ipInfo.lon} city={ipInfo.city} />
+              <Map lat={ipInfo.lat} lon={ipInfo.lon} />
             </div>
           </>
         )}

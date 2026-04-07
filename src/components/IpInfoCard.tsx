@@ -8,7 +8,7 @@ interface IpInfoCardProps {
 
 const rows: { label: string; key: keyof IpInfo }[] = [
   { label: "국가", key: "country" },
-  { label: "도시", key: "city" },
+  { label: "위치", key: "region" },
   { label: "시간대", key: "timezone" },
   { label: "ISP", key: "isp" },
 ];
