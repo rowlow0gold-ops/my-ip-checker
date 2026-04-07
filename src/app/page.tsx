@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { IpInfo } from "@/types/ip";
+import IpHeader from "@/components/IpHeader";
 import IpInfoCard from "@/components/IpInfoCard";
 import Footer from "@/components/Footer";
 
@@ -70,8 +71,12 @@ export default function Home() {
 
           {ipInfo && (
             <>
+              {/* IP Header - full width */}
+              <IpHeader ip={ipInfo.ip} />
+
+              {/* Info + Map side by side */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left: IP Info Card */}
+                {/* Left: Info Table */}
                 <IpInfoCard info={ipInfo} />
 
                 {/* Right: Map */}

@@ -1,7 +1,6 @@
 "use client";
 
 import { IpInfo } from "@/types/ip";
-import CopyButton from "@/components/CopyButton";
 
 interface IpInfoCardProps {
   info: IpInfo;
@@ -16,21 +15,12 @@ const rows: { label: string; key: keyof IpInfo; icon: string }[] = [
 
 export default function IpInfoCard({ info }: IpInfoCardProps) {
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden">
-      {/* IP Header */}
-      <div className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 px-6 py-6 text-center">
-        <p className="text-white/70 text-sm font-medium mb-2">
-          당신의 공인 IP 주소
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          <p className="text-white text-3xl font-mono font-bold tracking-wide">
-            {info.ip}
-          </p>
-          <CopyButton text={info.ip} />
-        </div>
+    <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden h-full">
+      <div className="px-6 py-4 border-b border-slate-100">
+        <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+          <span>📋</span> IP 상세 정보
+        </h2>
       </div>
-
-      {/* Info Table */}
       <div className="divide-y divide-slate-100">
         {rows.map(({ label, key, icon }) => (
           <div
