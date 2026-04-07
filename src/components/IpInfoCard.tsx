@@ -18,7 +18,7 @@ export default function IpInfoCard({ info }: IpInfoCardProps) {
   const { t } = useLang();
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden h-full">
+    <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden min-h-[356px]">
       <div className="px-6 py-4 border-b border-slate-100">
         <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
           <span>📋</span> {t("infoTitle")}

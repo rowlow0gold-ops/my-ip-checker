@@ -3,50 +3,59 @@
 export default function Skeleton() {
   return (
     <>
-      {/* IP Header skeleton - fixed height matching IpHeader */}
-      <div className="bg-gradient-to-r from-violet-500/50 via-purple-500/50 to-fuchsia-500/50 rounded-3xl shadow-xl px-6 py-8 text-center h-[120px] flex flex-col items-center justify-center">
-        <div className="h-4 w-36 rounded-full skeleton-shimmer mb-3" />
-        <div className="flex items-center justify-center gap-3">
-          <div className="h-9 w-56 rounded-full skeleton-shimmer" />
-          <div className="w-10 h-10 rounded-full skeleton-shimmer" />
+      {/* IP Header skeleton — inline styles so sizes are instant, no waiting for CSS */}
+      <div
+        style={{ padding: "32px 24px", minHeight: 132, textAlign: "center", borderRadius: 24 }}
+        className="bg-gradient-to-r from-violet-500/50 via-purple-500/50 to-fuchsia-500/50 shadow-xl"
+      >
+        <div style={{ height: 20, width: 144, borderRadius: 9999, margin: "0 auto 8px" }} className="skeleton-shimmer" />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+          <div style={{ height: 36, width: 224, borderRadius: 9999 }} className="skeleton-shimmer" />
+          <div style={{ width: 40, height: 40, borderRadius: 9999 }} className="skeleton-shimmer" />
         </div>
       </div>
 
-      {/* Info + Map skeleton side by side */}
+      {/* Info + Map side by side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Info card skeleton - fixed height matching IpInfoCard */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden h-[282px]">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
-            <div className="w-5 h-5 rounded skeleton-shimmer-light" />
-            <div className="h-4 w-20 rounded-full skeleton-shimmer-light" />
+        {/* Info card skeleton */}
+        <div
+          style={{ minHeight: 356, borderRadius: 24, overflow: "hidden" }}
+          className="bg-white/95 backdrop-blur-sm shadow-xl"
+        >
+          <div style={{ padding: "16px 24px", borderBottom: "1px solid rgb(241 245 249)", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 20, height: 20, borderRadius: 4 }} className="skeleton-shimmer-light" />
+            <div style={{ height: 16, width: 96, borderRadius: 9999 }} className="skeleton-shimmer-light" />
           </div>
-          <div className="divide-y divide-slate-100">
-            {["218.234.162.181", "South Korea", "Seoul", "Asia/Seoul"].map((text, i) => (
-              <div key={i} className="flex items-center px-6 py-4 gap-3">
-                <div className="w-6 h-6 rounded skeleton-shimmer-light" />
-                <div className="h-4 w-12 rounded-full skeleton-shimmer-light" />
-                <span className="text-slate-300 text-sm font-mono blur-[6px] select-none">
-                  {text}
-                </span>
-              </div>
-            ))}
-          </div>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", padding: "16px 24px", gap: 12, borderBottom: i < 4 ? "1px solid rgb(241 245 249)" : "none" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 9999, flexShrink: 0 }} className="skeleton-shimmer-light" />
+              <div style={{ height: 16, width: 48, borderRadius: 9999, flexShrink: 0 }} className="skeleton-shimmer-light" />
+              <div style={{ height: 16, width: 128, borderRadius: 9999 }} className="skeleton-shimmer-light" />
+            </div>
+          ))}
         </div>
 
-        {/* Map skeleton - fixed height matching Map */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden h-[282px]">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
-            <div className="w-5 h-5 rounded skeleton-shimmer-light" />
-            <div className="h-4 w-16 rounded-full skeleton-shimmer-light" />
+        {/* Map skeleton */}
+        <div
+          style={{ minHeight: 356, borderRadius: 24, overflow: "hidden" }}
+          className="bg-white/95 backdrop-blur-sm shadow-xl"
+        >
+          <div style={{ padding: "16px 24px", borderBottom: "1px solid rgb(241 245 249)", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 20, height: 20, borderRadius: 4 }} className="skeleton-shimmer-light" />
+            <div style={{ height: 16, width: 80, borderRadius: 9999 }} className="skeleton-shimmer-light" />
           </div>
-          <div className="h-[234px] relative overflow-hidden">
-            <div className="absolute inset-0 skeleton-shimmer-light" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg className="w-12 h-12 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-            </div>
+          <div style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center" }} className="skeleton-shimmer-light">
+            <svg style={{ width: 48, height: 48, color: "rgb(226 232 240)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
           </div>
+        </div>
+      </div>
+
+      {/* Bottom Ad skeleton */}
+      <div className="hidden md:block">
+        <div style={{ width: "100%", height: 90, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12 }} className="bg-white/10 border border-white/20 text-white/30">
+          광고 영역
         </div>
       </div>
     </>

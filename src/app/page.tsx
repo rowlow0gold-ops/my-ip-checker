@@ -80,7 +80,7 @@ function HomeContent() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <IpInfoCard info={ipInfo} />
 
-                <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden">
+                <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden min-h-[356px]">
                   <div className="px-6 py-4 border-b border-slate-100">
                     <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                       <span>🗺️</span> {t("mapTitle")}
