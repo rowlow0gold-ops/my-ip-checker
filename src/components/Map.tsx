@@ -85,18 +85,10 @@ export default function Map({ lat, lon }: MapProps) {
       },
       (error) => {
         setLocating(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            alert("위치 정보 접근이 거부되었습니다.");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            alert("위치 정보를 사용할 수 없습니다.");
-            break;
-          case error.TIMEOUT:
-            alert("위치 정보 요청 시간이 초과되었습니다.");
-            break;
-          default:
-            alert("알 수 없는 오류가 발생했습니다.");
+        if (error.code === error.PERMISSION_DENIED) {
+          alert("위치 정보 접근이 거부되었습니다.");
+        } else {
+          alert("데스크톱에서는 정확한 위치를 확인할 수 없습니다.\n모바일 기기에서 이용해 주세요.");
         }
       },
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
