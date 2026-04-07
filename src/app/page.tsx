@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { IpInfo } from "@/types/ip";
 import IpHeader from "@/components/IpHeader";
 import IpInfoCard from "@/components/IpInfoCard";
+import Skeleton from "@/components/Skeleton";
 import Footer from "@/components/Footer";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
@@ -56,18 +57,13 @@ export default function Home() {
 
         {/* Main Content */}
         <div className="max-w-5xl w-full px-4 py-8 flex flex-col gap-6">
-          {loading && (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-              <p className="text-white/70 text-sm">IP 정보를 불러오는 중...</p>
-            </div>
-          )}
-
           {error && (
             <div className="bg-red-400/20 border border-red-300/30 rounded-xl px-6 py-4 text-white text-sm">
               {error}
             </div>
           )}
+
+          {loading && <Skeleton />}
 
           {ipInfo && (
             <>
