@@ -51,10 +51,10 @@ function HomeContent() {
       </header>
 
       {/* Content with side ads */}
-      <div className="flex-1 flex justify-center">
+      <div className="flex-1 flex justify-center gap-8">
         {/* Left Ad - desktop only */}
-        <aside className="hidden xl:flex w-[160px] shrink-0 pt-8 pl-4">
-          <div className="sticky top-8 w-[160px] h-[600px] bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-white/30 text-xs">
+        <aside className="hidden xl:flex shrink-0 pt-8 pl-6">
+          <div className="sticky top-8 w-[200px] h-[600px] bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-white/30 text-xs">
             {t("ad")}
           </div>
         </aside>
@@ -87,28 +87,21 @@ function HomeContent() {
                   <Map lat={ipInfo.lat} lon={ipInfo.lon} lang={lang} />
                 </div>
               </div>
-
-              {/* Bottom Ad - desktop only */}
-              <div className="hidden md:block">
-                <div className="w-full h-[90px] bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-white/30 text-xs">
-                  {t("ad")}
-                </div>
-              </div>
             </>
           )}
         </div>
 
         {/* Right Ad - desktop only */}
-        <aside className="hidden xl:flex w-[160px] shrink-0 pt-8 pr-4">
-          <div className="sticky top-8 w-[160px] h-[600px] bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-white/30 text-xs">
+        <aside className="hidden xl:flex shrink-0 pt-8 pr-6">
+          <div className="sticky top-8 w-[200px] h-[600px] bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-white/30 text-xs">
             {t("ad")}
           </div>
         </aside>
       </div>
 
-      {/* Mobile sticky bottom ad */}
-      <div className="md:hidden sticky bottom-0 z-50 p-2">
-        <div className="w-full h-[50px] bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl shadow-lg flex items-center justify-center text-slate-400 text-xs">
+      {/* Mobile bottom ad */}
+      <div className="xl:hidden p-4">
+        <div className="w-full h-[90px] bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-white/30 text-xs">
           {t("ad")}
         </div>
       </div>

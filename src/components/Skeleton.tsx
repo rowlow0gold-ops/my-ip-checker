@@ -52,12 +52,6 @@ export default function Skeleton() {
         </div>
       </div>
 
-      {/* Bottom Ad skeleton */}
-      <div className="hidden md:block">
-        <div style={{ width: "100%", height: 90, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12 }} className="bg-white/10 border border-white/20 text-white/30">
-          광고 영역
-        </div>
-      </div>
     </>
   );
 }
