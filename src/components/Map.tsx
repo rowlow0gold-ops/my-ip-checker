@@ -8,9 +8,10 @@ import { useLang } from "@/context/LangContext";
 interface MapProps {
   lat: number;
   lon: number;
+  lang?: string;
 }
 
-export default function Map({ lat, lon }: MapProps) {
+export default function Map({ lat, lon, lang = "ko" }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
@@ -35,9 +36,10 @@ export default function Map({ lat, lon }: MapProps) {
     const map = L.map(mapRef.current).setView([lat, lon], 11);
     mapInstanceRef.current = map;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
+    L.tileLayer("https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png?lang={lang}", {
+      attribution: "&copy; OpenStreetMap contributors &copy; Wikimedia",
+      lang,
+    } as L.TileLayerOptions & { lang: string }).addTo(map);
 
     return () => {
       if (mapInstanceRef.current) {
@@ -45,7 +47,7 @@ export default function Map({ lat, lon }: MapProps) {
         mapInstanceRef.current = null;
       }
     };
-  }, [lat, lon]);
+  }, [lat, lon, lang]);
 
   const handleLocate = () => {
     if (!navigator.geolocation) {
