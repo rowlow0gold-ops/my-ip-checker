@@ -79,7 +79,7 @@ export default function Map({ lat, lon, lang = "ko" }: MapProps) {
         style: localizedStyle,
         center: [lon, lat],
         zoom: 11,
-        attributionControl: true,
+        attributionControl: {},
       });
 
       mapInstanceRef.current = map;
