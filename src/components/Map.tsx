@@ -45,9 +45,6 @@ export default function Map({ lat, lon }: MapProps) {
       return;
     }
 
-    const ok = confirm("현재 위치를 확인하기 위해 위치 정보 접근 권한이 필요합니다.\n허용하시겠습니까?");
-    if (!ok) return;
-
     setLocating(true);
 
     navigator.geolocation.getCurrentPosition(
@@ -102,7 +99,7 @@ export default function Map({ lat, lon }: MapProps) {
             alert("알 수 없는 오류가 발생했습니다.");
         }
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
     );
   };
 
