@@ -8,15 +8,9 @@ interface IpInfoCardProps {
 
 const rows: { label: string; key: keyof IpInfo }[] = [
   { label: "국가", key: "country" },
-  { label: "지역", key: "region" },
   { label: "도시", key: "city" },
-  { label: "우편번호", key: "zip" },
-  { label: "위도", key: "lat" },
-  { label: "경도", key: "lon" },
   { label: "시간대", key: "timezone" },
   { label: "ISP", key: "isp" },
-  { label: "조직", key: "org" },
-  { label: "AS", key: "as" },
 ];
 
 export default function IpInfoCard({ info }: IpInfoCardProps) {
