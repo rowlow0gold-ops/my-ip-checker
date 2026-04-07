@@ -31,7 +31,7 @@ export default function IpInfoCard({ info }: IpInfoCardProps) {
             className="flex items-center px-6 py-4 hover:bg-violet-50/50 transition-colors"
           >
             <span className="text-lg mr-3">{icon}</span>
-            <span className="text-slate-400 text-sm font-medium w-20 shrink-0">
+            <span className="text-slate-400 text-sm font-medium min-w-20 shrink-0 mr-3">
               {t(tKey)}
             </span>
             <span className="text-slate-800 text-sm font-semibold font-mono">
