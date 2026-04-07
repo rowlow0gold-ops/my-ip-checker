@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useLang } from "@/context/LangContext";
 
 interface MapProps {
   lat: number;
@@ -17,6 +18,7 @@ export default function Map({ lat, lon }: MapProps) {
   const [located, setLocated] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { t } = useLang();
 
   useEffect(() => {
     setIsMobile("ontouchstart" in window || navigator.maxTouchPoints > 0);
@@ -47,7 +49,7 @@ export default function Map({ lat, lon }: MapProps) {
 
   const handleLocate = () => {
     if (!navigator.geolocation) {
-      setErrorMsg("이 브라우저에서는 위치 서비스를 지원하지 않습니다.");
+      setErrorMsg(t("noGeolocation"));
       return;
     }
 
@@ -81,7 +83,7 @@ export default function Map({ lat, lon }: MapProps) {
 
         markerRef.current = L.marker([latitude, longitude], { icon })
           .addTo(map)
-          .bindPopup("내 실제 위치")
+          .bindPopup(t("myLocation"))
           .openPopup();
 
         setLocating(false);
@@ -90,18 +92,12 @@ export default function Map({ lat, lon }: MapProps) {
       },
       (error) => {
         setLocating(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            setErrorMsg("위치 정보 접근이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해 주세요.");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            setErrorMsg("위치 정보를 사용할 수 없습니다. 기기의 위치 서비스가 꺼져 있을 수 있습니다.");
-            break;
-          case error.TIMEOUT:
-            setErrorMsg("서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.");
-            break;
-          default:
-            setErrorMsg("알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        if (error.code === error.PERMISSION_DENIED) {
+          setErrorMsg(t("permissionDenied"));
+        } else if (error.code === error.TIMEOUT) {
+          setErrorMsg(t("timeout"));
+        } else {
+          setErrorMsg(t("positionUnavailable"));
         }
       },
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
@@ -112,7 +108,6 @@ export default function Map({ lat, lon }: MapProps) {
     <div className="relative">
       <div ref={mapRef} className="w-full h-[300px] rounded-xl z-0" />
 
-      {/* Only show button on mobile */}
       {isMobile && (
         <button
           onClick={handleLocate}
@@ -122,14 +117,7 @@ export default function Map({ lat, lon }: MapProps) {
           {locating ? (
             <>
               <div className="w-3.5 h-3.5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
-              위치 확인 중...
-            </>
-          ) : located ? (
-            <>
-              <svg className="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-              </svg>
-              내 실제 위치 보기
+              {t("locating")}
             </>
           ) : (
             <>
@@ -137,13 +125,12 @@ export default function Map({ lat, lon }: MapProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              내 실제 위치 보기
+              {t("locateBtn")}
             </>
           )}
         </button>
       )}
 
-      {/* Error message banner */}
       {errorMsg && (
         <div className="absolute bottom-3 left-3 right-3 z-[1000] bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-red-700 text-xs flex items-start gap-2">
           <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
