@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
         region: result.region,
         city: result.city,
         isp: result.isp,
+        page: 'my-ip-checker',
       })
       .then();
 
