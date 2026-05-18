@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
-  const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0].trim() : "127.0.0.1";
+  // Cloudflare always sets cf-connecting-ip to the real client IP.
+  // Fall back to x-forwarded-for (other proxies) then x-real-ip.
+  const cf = request.headers.get("cf-connecting-ip");
+  const fwd = request.headers.get("x-forwarded-for");
+  const real = request.headers.get("x-real-ip");
+  const ip = cf || (fwd ? fwd.split(",")[0].trim() : null) || real || "127.0.0.1";
 
   try {
     const geoRes = await fetch(
@@ -52,7 +56,7 @@ export async function GET(request: NextRequest) {
         region: result.region,
         city: result.city,
         isp: result.isp,
-        page: 'my-ip-checker',
+        page: "my-ip-checker",
       })
       .then();
 
