@@ -21,7 +21,7 @@ function HomeContent() {
   useEffect(() => {
     const fetchIp = async () => {
       try {
-        const res = await fetch("/api/ip");
+        const res = await fetch("/api/ip" + window.location.search);
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         setIpInfo(data);

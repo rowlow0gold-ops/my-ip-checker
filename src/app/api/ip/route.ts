@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
-  // Cloudflare always sets cf-connecting-ip to the real client IP.
-  // Fall back to x-forwarded-for (other proxies) then x-real-ip.
+  // Local-dev debug override: ?ip=1.2.3.4
+  const debugIp = new URL(request.url).searchParams.get("ip");
+
+  // Cloudflare always sets cf-connecting-ip in production.
   const cf = request.headers.get("cf-connecting-ip");
   const fwd = request.headers.get("x-forwarded-for");
   const real = request.headers.get("x-real-ip");
-  const ip = cf || (fwd ? fwd.split(",")[0].trim() : null) || real || "127.0.0.1";
+  const detectedIp =
+    cf || (fwd ? fwd.split(",")[0].trim() : null) || real || "127.0.0.1";
+  const ip = debugIp || detectedIp;
 
   try {
     const geoRes = await fetch(
@@ -16,36 +20,62 @@ export async function GET(request: NextRequest) {
     );
     const geoData = await geoRes.json();
 
-    const result =
-      geoData.status === "fail"
-        ? {
-            ip,
-            country: "-",
-            countryCode: "-",
-            region: "-",
-            city: "-",
-            zip: "-",
-            lat: 37.5665,
-            lon: 126.978,
-            timezone: "-",
-            isp: "-",
-            org: "-",
-            as: "-",
+    const failed = geoData.status === "fail";
+    let lat = failed ? 37.5665 : geoData.lat;
+    let lon = failed ? 126.978 : geoData.lon;
+
+    // Geocode the city name → city-center coords (replaces approximate IP coords)
+    if (!failed && geoData.city) {
+      try {
+        const q = encodeURIComponent(`${geoData.city}, ${geoData.country}`);
+        const nomRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
+          {
+            headers: {
+              "User-Agent": "my-ip-checker (minhojan-world.site)",
+            },
+            next: { revalidate: 86400 },
           }
-        : {
-            ip: geoData.query || ip,
-            country: geoData.country,
-            countryCode: geoData.countryCode,
-            region: geoData.regionName,
-            city: geoData.city,
-            zip: geoData.zip,
-            lat: geoData.lat,
-            lon: geoData.lon,
-            timezone: geoData.timezone,
-            isp: geoData.isp,
-            org: geoData.org,
-            as: geoData.as,
-          };
+        );
+        const nom = await nomRes.json();
+        if (Array.isArray(nom) && nom.length > 0) {
+          lat = parseFloat(nom[0].lat);
+          lon = parseFloat(nom[0].lon);
+        }
+      } catch {
+        // Fall back to IP coords if Nominatim fails
+      }
+    }
+
+    const result = failed
+      ? {
+          ip,
+          country: "-",
+          countryCode: "-",
+          region: "-",
+          city: "-",
+          zip: "-",
+          lat,
+          lon,
+          timezone: "-",
+          isp: "-",
+          org: "-",
+          as: "-",
+        }
+      : {
+          ip: geoData.query || ip,
+          country: geoData.country,
+          countryCode: geoData.countryCode,
+          region: geoData.regionName,
+          city: geoData.city,
+          zip: geoData.zip,
+          lat,
+          lon,
+          timezone: geoData.timezone,
+          isp: geoData.isp,
+          org: geoData.org,
+          as: geoData.as,
+        };
 
     // Log visit to Supabase (fire and forget, don't block the response)
     supabase
